@@ -1,7 +1,7 @@
 package com.demo.web.login;
 
 import com.demo.domain.member.Member;
-import com.demo.domain.service.LoginService;
+import com.demo.domain.service.login.LoginService;
 import com.demo.web.SessionConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,9 +1,10 @@
-package com.demo.domain.repository;
+package com.demo.domain.repository.jpa;
 
 import com.demo.domain.member.Member;
 import com.demo.domain.member.MemberType;
-import com.demo.domain.support.Querydsl4RepositorySupport;
-import com.demo.web.member.form.MemberUpdateDto;
+import com.demo.domain.repository.MemberRepository;
+import com.demo.domain.repository.support.QuerydslRepositorySupport;
+import com.demo.web.controller.member.form.MemberUpdateDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,21 +13,23 @@ import java.util.Optional;
 import static com.demo.domain.member.QMember.member;
 
 @Repository
-public class JpaMemberRepository extends Querydsl4RepositorySupport {
+public class JpaMemberRepository extends QuerydslRepositorySupport implements MemberRepository {
 
     public JpaMemberRepository() {
         super(Member.class);
     }
 
-    public Member findById(Long id) {
-        return selectFrom(member)
+    public Optional<Member> findById(Long id) {
+        return getJpaRepository().findById(id);
+        /*return Optional.ofNullable(selectFrom(member)
                 .where(member.id.eq(id))
-                .fetchOne();
+                .fetchOne());*/
         //fetchOne() 메소드는 쿼리 결과가 하나 이상일 때는 NonUniqueResultException 예외를 던지며, 결과가 없을 때는 null을 반환
     }
 
     public List<Member> findAll() {
-        return selectFrom(member).fetch();
+        return getJpaRepository().findAll();
+//        return selectFrom(member).fetch();
     }
 
     public Optional<Member> findByUsername(String loginId) {
@@ -37,16 +40,10 @@ public class JpaMemberRepository extends Querydsl4RepositorySupport {
         );
     }
 
-    public void save(Member newMember) {
-//        getQueryFactory().insert(member)
-//                .set(member.memberType, MemberType.NOMAL)
-//                .set(member.username, newMember.getUsername())
-//                .set(member.password, newMember.getPassword())
-//                .set(member.name, newMember.getName())
-//                .set(member.nickName, newMember.getNickName())
-//                .execute();
-        newMember.setMemberType(MemberType.NOMAL);
-        getEntityManager().persist(newMember);
+    public Member save(Member member) {
+        member.setMemberType(MemberType.NOMAL);
+        getEntityManager().persist(member);
+        return member;
     }
 
     public void update(Long memberId, MemberUpdateDto updateParam) {
@@ -63,5 +60,7 @@ public class JpaMemberRepository extends Querydsl4RepositorySupport {
                 .fetchCount();
     }
 
-
+    public void delete(Member member) {
+        getEntityManager().remove(member);
+    }
 }

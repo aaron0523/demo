@@ -1,9 +1,9 @@
-package com.demo.web.member;
+package com.demo.web.controller.member;
 
 import com.demo.domain.member.Member;
-import com.demo.domain.service.MemberService;
+import com.demo.domain.service.member.MemberServiceImp;
 import com.demo.web.SessionConst;
-import com.demo.web.member.form.MemberUpdateDto;
+import com.demo.web.controller.member.form.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @RequestMapping("/members")
 public class MemberController {
 
-    private final MemberService memberService;
+    private final MemberServiceImp memberService;
 
     @GetMapping("/add")
     public String addForm(@ModelAttribute Member member) {
@@ -28,8 +28,13 @@ public class MemberController {
     }
 
     @PostMapping("/add")
-    public String save(@Valid @ModelAttribute Member member, BindingResult bindingResult) {
+    public String save(@Valid @ModelAttribute Member member,
+                       @RequestParam("confirmPassword") String confirmPassword, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            return "members/addMemberForm";
+        }
+
+        if (!member.getPassword().equals(confirmPassword)) {
             return "members/addMemberForm";
         }
 

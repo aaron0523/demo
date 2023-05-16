@@ -1,6 +1,7 @@
-package com.demo.web;
+package com.demo.web.controller;
 
 import com.demo.domain.member.Member;
+import com.demo.web.SessionConst;
 import com.demo.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
