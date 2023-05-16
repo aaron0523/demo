@@ -55,7 +55,7 @@ public class MemberService {
     @Transactional
     public void update(Long id, MemberUpdateDto updateParam) {
         Member findMember = jpaMemberRepository.findById(id);
-
+        jpaMemberRepository.update(findMember.getId(), updateParam);
     }
 
 }

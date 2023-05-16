@@ -13,7 +13,7 @@ public class LogInterceptor implements HandlerInterceptor {
 
     public static final String LOG_ID = "logId";
 
-    @Override
+    @Override // 컨트롤러 호출 전에 실행되며, 요청 정보와 핸들러 정보를 출력
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         String requestURI = request.getRequestURI();
@@ -28,12 +28,12 @@ public class LogInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    @Override
+    @Override // 컨트롤러 호출 후, 뷰 렌더링 전에 실행됩니다. 이 메서드에서는 ModelAndView 객체를 이용하여 뷰에 전달할 데이터를 추가할 수 있다.
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         log.info("postHandle [{}]", modelAndView);
     }
 
-    @Override
+    @Override // 뷰 렌더링 후 실행됩니다. 이 메서드에서는 예외가 발생했을 경우에 대한 처리를 수행
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         String requestURI = request.getRequestURI();
 

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @RequiredArgsConstructor
 public class HomeController {
 
-        @GetMapping("/")
+//    @GetMapping("/")
     public String homeLoginSpring(
             @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member loginMember, Model model) {
 
@@ -28,7 +28,7 @@ public class HomeController {
         return "loginHome";
     }
 
-//    @GetMapping("/")
+    @GetMapping("/")
     public String homeLoginArgumentResolver(@Login Member loginMember, Model model) {
 
         //세션에 회원 데이터가 없으면 home

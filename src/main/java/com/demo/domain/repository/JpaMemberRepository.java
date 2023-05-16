@@ -51,6 +51,7 @@ public class JpaMemberRepository extends Querydsl4RepositorySupport {
 
     public void update(Long memberId, MemberUpdateDto updateParam) {
         getQueryFactory().update(member)
+                .set(member.password, updateParam.getPassword())
                 .set(member.name, updateParam.getName())
                 .set(member.nickName, updateParam.getNickName())
                 .where(member.id.eq(memberId))
