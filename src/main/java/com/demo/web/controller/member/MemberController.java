@@ -59,6 +59,7 @@ public class MemberController {
     @PostMapping("/edit")
     public String update(@Validated @ModelAttribute("member") Member member, BindingResult bindingResult,
                          @RequestParam("confirmPassword") String confirmPassword, HttpSession session) {
+        // 폼 입력값 검증
         if (bindingResult.hasErrors()) {
             return "members/editMemberForm";
         }
@@ -71,7 +72,8 @@ public class MemberController {
 
         // 비밀번호 확인
         if (!member.getPassword().equals(confirmPassword)) {
-            bindingResult.rejectValue("confirmPassword", "password.mismatch", "비밀번호가 일치하지 않습니다.");
+//            bindingResult.rejectValue("confirmPassword", "password.mismatch", "비밀번호가 일치하지 않습니다.");
+            bindingResult.rejectValue("confirmPassword", "password.mismatch");
             return "members/editMemberForm";
         }
 
@@ -87,7 +89,6 @@ public class MemberController {
         loggedInMember.setName(member.getName());
         loggedInMember.setNickName(member.getNickName());
         loggedInMember.setPassword(member.getPassword());
-
         session.setAttribute(SessionConst.LOGIN_MEMBER, loggedInMember);
 
         return "loginHome";
