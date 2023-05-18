@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 700px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="py-6 text-center" style="padding-top: 30px" >
+        <h2 >상세페이지</h2>
+    </div>
+    <br/>
+    <table class="table">
+        <tbody>
+        <tr>
+            <th style="width: 15%">제목</th>
+            <td th:text="${postInfo.title}"</td>
+            <th style="width: 15%">작성날짜</th>
+            <td th:text="${postInfo.created_date}"></td>
+        </tr>
+        <tr>
+            <th style="width: 15%">작성자</th>
+            <td th:text="${postInfo.author}"></td>
+            <th style="width: 15%">수정날짜</th>
+            <td th:text="${postInfo.modified_date}"></td>
+        </tr>
+        <tr>
+            <th style="width: 15%">내용</th>
+            <td colspan="3" th:text="${postInfo.content}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <hr class="my-4">
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    onclick="location.href='update.html'"
+                    th:onclick="|location.href='@{/board/{postId}/editPage(postId=${postInfo.id})}'|"
+                    type="button" >수정</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    onclick="location.href='index.html'"
+                    th:onclick="|location.href='@{/board/}'|"
+                    type="button" >목록으로</button>
+        </div>
+
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    onclick="location.href='index.html'"
+                    th:onclick="|location.href='@{/board/{postId}/delete(postId=${postInfo.id})}'|"
+                    type="button">삭제</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

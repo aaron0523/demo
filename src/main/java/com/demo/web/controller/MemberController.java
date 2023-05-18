@@ -1,6 +1,7 @@
 package com.demo.web.controller;
 
 import com.demo.domain.member.Member;
+import com.demo.domain.service.member.MemberService;
 import com.demo.domain.service.member.MemberServiceImp;
 import com.demo.web.SessionConst;
 import com.demo.web.dto.member.MemberJoinDto;
@@ -27,7 +28,7 @@ import java.util.Optional;
 @RequestMapping("/members")
 public class MemberController {
 
-    private final MemberServiceImp memberService;
+    private final MemberService memberService;
 
     @GetMapping("/add")
     public String addForm(Model model, HttpServletRequest request) {

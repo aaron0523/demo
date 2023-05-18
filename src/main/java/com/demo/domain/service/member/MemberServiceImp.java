@@ -1,7 +1,7 @@
 package com.demo.domain.service.member;
 
 import com.demo.domain.member.Member;
-import com.demo.domain.repository.jpa.JpaMemberRepository;
+import com.demo.domain.repository.jpa.member.JpaMemberQuerydslRepository;
 import com.demo.web.dto.member.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @Slf4j
 public class MemberServiceImp implements MemberService {
 
-    private final JpaMemberRepository jpaMemberRepository;
+    private final JpaMemberQuerydslRepository jpaMemberRepository;
 
     /**
      * 회원가입

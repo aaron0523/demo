@@ -1,8 +1,8 @@
-package com.demo.domain.repository.jpa;
+package com.demo.domain.repository.jpa.member;
 
 import com.demo.domain.member.Member;
 import com.demo.domain.member.MemberType;
-import com.demo.domain.repository.MemberRepository;
+import com.demo.domain.repository.support.MemberRepository;
 import com.demo.domain.repository.support.QuerydslRepositorySupport;
 import com.demo.web.dto.member.MemberUpdateDto;
 import org.springframework.stereotype.Repository;
@@ -13,14 +13,16 @@ import java.util.Optional;
 import static com.demo.domain.member.QMember.member;
 
 @Repository
-public class JpaMemberRepository extends QuerydslRepositorySupport implements MemberRepository {
+public class JpaMemberQuerydslRepository extends QuerydslRepositorySupport implements MemberRepository {
 
-    public JpaMemberRepository() {
+    public JpaMemberQuerydslRepository() {
         super(Member.class);
     }
 
+    private SpringDataJpaMemberRepository JpaMemberRepository;
+
     public Optional<Member> findById(Long id) {
-        return getJpaRepository().findById(id);
+        return JpaMemberRepository.findById(id);
         /*return Optional.ofNullable(selectFrom(member)
                 .where(member.id.eq(id))
                 .fetchOne());*/
@@ -28,7 +30,7 @@ public class JpaMemberRepository extends QuerydslRepositorySupport implements Me
     }
 
     public List<Member> findAll() {
-        return getJpaRepository().findAll();
+        return JpaMemberRepository.findAll();
 //        return selectFrom(member).fetch();
     }
 
@@ -42,7 +44,7 @@ public class JpaMemberRepository extends QuerydslRepositorySupport implements Me
 
     public Member save(Member member) {
         member.setMemberType(MemberType.NOMAL);
-        getEntityManager().persist(member);
+        JpaMemberRepository.save(member);
         return member;
     }
 
@@ -61,6 +63,6 @@ public class JpaMemberRepository extends QuerydslRepositorySupport implements Me
     }
 
     public void delete(Member member) {
-        getEntityManager().remove(member);
+        JpaMemberRepository.delete(member);
     }
 }

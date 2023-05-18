@@ -1,4 +1,4 @@
-package com.demo.domain.repository;
+package com.demo.domain.repository.support;
 
 import com.demo.domain.member.Member;
 import com.demo.web.dto.member.MemberUpdateDto;
