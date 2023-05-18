@@ -16,8 +16,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -28,16 +30,26 @@ public class MemberController {
     private final MemberServiceImp memberService;
 
     @GetMapping("/add")
-    public String addForm(Model model) {
-        model.addAttribute("memberJoinDto", new MemberJoinDto());
+    public String addForm(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        MemberJoinDto memberJoinDto = (MemberJoinDto) session.getAttribute("memberJoinDto");
+        log.info("로그인 ID =========> {}", Optional.ofNullable(memberJoinDto).map(MemberJoinDto::getUsername).orElse(""));
+//        log.info("로그인 ID =========> {}", memberJoinDto != null ? (memberJoinDto.getUsername() != null ? memberJoinDto.getUsername() : "") : "");
+        if (memberJoinDto == null) {
+            memberJoinDto = new MemberJoinDto();
+        }
+        model.addAttribute("memberJoinDto", memberJoinDto);
         return "members/addMemberForm";
     }
 
     @PostMapping("/add")
-    public String save(@Valid @ModelAttribute MemberJoinDto memberJoinDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String save(@Valid @ModelAttribute MemberJoinDto memberJoinDto, BindingResult bindingResult,
+                       RedirectAttributes redirectAttributes, HttpSession session) {
         // 폼 입력값 검증
         new MemberJoinDtoValidator().validate(memberJoinDto, bindingResult);
         if (bindingResult.hasErrors()) {
+            // 입력값이 유효하지 않을 경우 세션에 값 저장
+            session.setAttribute("memberJoinDto", memberJoinDto);
             return "members/addMemberForm";
         }
 
@@ -53,6 +65,8 @@ public class MemberController {
         } catch (IllegalStateException e) {
             // 예외 메시지를 "errorMessage"라는 이름으로 세션에 추가
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            // 입력값이 유효하지 않을 경우 세션에 값 저장
+            session.setAttribute("memberJoinDto", memberJoinDto);
             return "redirect:/members/add";
         }
 
