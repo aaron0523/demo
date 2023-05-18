@@ -46,7 +46,7 @@
 <script th:inline="javascript">
     let loggedInUser = /*[[${#httpSession.getAttribute('loginMember')?.name}]]*/ null;
     if(loggedInUser != null) {
-        let loginMessage = /*[[#{page.home.login}]]*/ '로그인';
+        let loginMessage = /*[[#{page.login}]]*/ '로그인';
         document.querySelector('.h4').innerHTML = loginMessage + ': ' + loggedInUser;
     }
 </script>

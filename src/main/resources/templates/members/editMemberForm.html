@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <link th:href="@{/css/bootstrap.min.css}"
           href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .field-error {
+            color: #dc3545;
+        }
+    </style>
 </head>
 <body>
 
@@ -15,10 +20,10 @@
 
     <hr class="my-4">
 
-    <form th:action th:object="${member}" method="post">
+    <form th:action th:object="${memberUpdateDto}" method="post">
 
         <div>
-            <label for="username" th:text="#{label.member_id}">Member_ID</label>
+            <label for="id" th:text="#{label.member_id}">Member_ID</label>
             <input type="text" id="id" th:field="*{id}" class="form-control" readonly>
         </div>
         <div>
@@ -30,27 +35,30 @@
         <div>
             <label for="password" th:text="#{label.password}">비밀번호</label>
             <input type="password" id="password" th:field="*{password}" class="form-control"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{password}"/>
+                   th:errorclass="${#fields.hasErrors('password')} ? 'field-error' : ''">
+            <div class="field-error" th:errors="*{password}"></div>
         </div>
         <div>
             <label for="confirmPassword" th:text="#{label.confirmPassword}">비밀번호 확인</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
-                   th:errorclass="field-error">
+            <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control"
+                   th:errorclass="${#fields.hasErrors('confirmPassword')} ? 'field-error' : ''" value="">
             <div class="field-error" th:errors="*{confirmPassword}"></div>
         </div>
+
         <div>
             <label for="name" th:text="#{label.name}">이름</label>
             <input type="text" id="name" th:field="*{name}" class="form-control"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{name}"/>
+                   th:errorclass="${#fields.hasErrors('name')} ? 'field-error' : ''">
+            <div class="field-error" th:errors="*{name}"></div>
         </div>
+
         <div>
             <label for="nickName" th:text="#{label.nickName}">별명</label>
             <input type="text" id="nickName" th:field="*{nickName}" class="form-control"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{nickName}"/>
+                   th:errorclass="${#fields.hasErrors('nickName')} ? 'field-error' : ''">
+            <div class="field-error" th:errors="*{nickName}"></div>
         </div>
+
 
         <hr class="my-4">
 

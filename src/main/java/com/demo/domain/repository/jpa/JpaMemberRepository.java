@@ -4,7 +4,7 @@ import com.demo.domain.member.Member;
 import com.demo.domain.member.MemberType;
 import com.demo.domain.repository.MemberRepository;
 import com.demo.domain.repository.support.QuerydslRepositorySupport;
-import com.demo.web.controller.member.form.MemberUpdateDto;
+import com.demo.web.dto.member.MemberUpdateDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.demo.domain.repository;
 
 import com.demo.domain.member.Member;
-import com.demo.web.controller.member.form.MemberUpdateDto;
+import com.demo.web.dto.member.MemberUpdateDto;
 
 import java.util.List;
 import java.util.Optional;

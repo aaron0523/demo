@@ -2,7 +2,7 @@ package com.demo.domain.service.member;
 
 import com.demo.domain.member.Member;
 import com.demo.domain.repository.jpa.JpaMemberRepository;
-import com.demo.web.controller.member.form.MemberUpdateDto;
+import com.demo.web.dto.member.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,16 +25,14 @@ public class MemberServiceImp implements MemberService {
     @Transactional
     public Member join(Member member) {
         validateDuplicateMember(member);
-        log.info("=========> 회원가입 검증까지는 성공");
         jpaMemberRepository.save(member);
-        log.info("=========> 회원 가입 = {}", member.getUsername());
         return member;
     }
 
     private void validateDuplicateMember(Member member) {
         Optional<Member> findMember = jpaMemberRepository.findByUsername(member.getUsername());
         if (findMember.isPresent()) {
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+            throw new IllegalStateException("이미 존재하는 회원 ID 입니다.");
         }
     }
 
