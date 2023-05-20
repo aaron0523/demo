@@ -1,7 +1,5 @@
 package com.demo.domain.repository.support;
 
-import com.demo.domain.repository.jpa.member.SpringDataJpaMemberRepository;
-import com.demo.domain.repository.jpa.post.SpringDataJpaPostRepository;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -36,12 +34,8 @@ public abstract class QuerydslRepositorySupport {
     }
 
     @Autowired
-    public void setEntityManager(EntityManager entityManager,
-                                 SpringDataJpaMemberRepository springDataJpaMemberRepository,
-                                 SpringDataJpaPostRepository springDataJpaPostRepository) {
+    public void setEntityManager(EntityManager entityManager) {
         Assert.notNull(entityManager, "EntityManager must not be null!");
-        Assert.notNull(springDataJpaMemberRepository, "springDataJpaMemberRepository must not be null!");
-        Assert.notNull(springDataJpaPostRepository, "springDataJpaPostRepository must not be null!");
 
         // entityManager 를 사용하여 엔티티 정보를 가져와서 JpaEntityInformation 객체를 생성.
         // 이 정보를 기반으로 Querydsl 에서 사용할 수 있는 EntityPath 를 생성.

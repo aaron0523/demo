@@ -1,7 +1,8 @@
 package com.demo.domain.service.member;
 
 import com.demo.domain.member.Member;
-import com.demo.domain.repository.jpa.member.JpaMemberQuerydslRepository;
+import com.demo.domain.member.MemberType;
+import com.demo.domain.repository.jpa.member.JpaMemberRepository;
 import com.demo.web.dto.member.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @Slf4j
 public class MemberServiceImp implements MemberService {
 
-    private final JpaMemberQuerydslRepository jpaMemberRepository;
+    private final JpaMemberRepository jpaMemberRepository;
 
     /**
      * 회원가입
@@ -25,6 +26,7 @@ public class MemberServiceImp implements MemberService {
     @Transactional
     public Member join(Member member) {
         validateDuplicateMember(member);
+        member.setMemberType(MemberType.NORMAL);
         jpaMemberRepository.save(member);
         return member;
     }
@@ -47,25 +49,25 @@ public class MemberServiceImp implements MemberService {
      * 회원 조회
      */
     public Optional<Member> findById(Long id) {
-        return Optional.ofNullable(jpaMemberRepository.findById(id).orElse(null));
+        return jpaMemberRepository.findById(id);
     }
 
 
     /**
-     * 회원 username 으로 조회
+     * 회원 username으로 조회
      */
-    public Optional<Member> findByUsername(String loginId) {
-        return Optional.ofNullable(jpaMemberRepository.findByUsername(loginId).orElse(null));
+    public Optional<Member> findByUsername(String username) {
+        return jpaMemberRepository.findByUsername(username);
     }
 
     /**
      * 회원 수정
      */
     @Transactional
-    public void update(Long id, MemberUpdateDto updateParam) {
-        Member findMember = jpaMemberRepository.findById(id).orElse(null);
+    public void update(Long memberId, MemberUpdateDto memberUpdateDto) {
+        Member findMember = jpaMemberRepository.findById(memberId).orElse(null);
         if (findMember != null) {
-            jpaMemberRepository.update(id, updateParam);
+            jpaMemberRepository.update(memberId, memberUpdateDto);
         }
     }
 

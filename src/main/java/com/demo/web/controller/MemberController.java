@@ -2,7 +2,6 @@ package com.demo.web.controller;
 
 import com.demo.domain.member.Member;
 import com.demo.domain.service.member.MemberService;
-import com.demo.domain.service.member.MemberServiceImp;
 import com.demo.web.SessionConst;
 import com.demo.web.dto.member.MemberJoinDto;
 import com.demo.web.dto.member.MemberUpdateDto;
@@ -20,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
@@ -51,7 +51,7 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             // 입력값이 유효하지 않을 경우 세션에 값 저장
             session.setAttribute("memberJoinDto", memberJoinDto);
-            return "members/addMemberForm";
+            return "redirect:/members/add";
         }
 
         // 회원 정보 저장
@@ -107,7 +107,7 @@ public class MemberController {
         }
 
         // 회원 정보 업데이트
-        memberUpdateDto.getUpdatedDate().now();
+        memberUpdateDto.setUpdatedDate(LocalDateTime.now());
         memberService.update(loggedInMember.getId(), memberUpdateDto);
 
         // 현재 세션 업데이트

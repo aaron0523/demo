@@ -1,6 +1,6 @@
 package com.demo.domain.member;
 
-import com.demo.domain.post.Post;
+import com.demo.domain.board.Board;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -37,9 +37,9 @@ public class Member {
     @Column(nullable = false, length = 30)
     private String nickName;//별명
 
-    //CascadeType.ALL : Member 엔티티를 저장할 때 연관된 모든 Post 엔티티도 함께 저장되도록 설정
+    //CascadeType.ALL : Member 엔티티를 저장할 때 연관된 모든 Board 엔티티도 함께 저장되도록 설정
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
+    private List<Board> boards = new ArrayList<>();
 
     @CreatedDate
     @Column(name = "created_date")

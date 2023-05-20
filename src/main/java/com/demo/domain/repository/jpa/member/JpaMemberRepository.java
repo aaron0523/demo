@@ -1,7 +1,6 @@
 package com.demo.domain.repository.jpa.member;
 
 import com.demo.domain.member.Member;
-import com.demo.domain.member.MemberType;
 import com.demo.domain.repository.support.MemberRepository;
 import com.demo.domain.repository.support.QuerydslRepositorySupport;
 import com.demo.web.dto.member.MemberUpdateDto;
@@ -13,16 +12,17 @@ import java.util.Optional;
 import static com.demo.domain.member.QMember.member;
 
 @Repository
-public class JpaMemberQuerydslRepository extends QuerydslRepositorySupport implements MemberRepository {
+public class JpaMemberRepository extends QuerydslRepositorySupport implements MemberRepository {
 
-    public JpaMemberQuerydslRepository() {
+    private final SpringDataJpaMemberRepository jpaMemberRepository;
+
+    public JpaMemberRepository(SpringDataJpaMemberRepository jpaMemberRepository) {
         super(Member.class);
+        this.jpaMemberRepository = jpaMemberRepository;
     }
 
-    private SpringDataJpaMemberRepository JpaMemberRepository;
-
     public Optional<Member> findById(Long id) {
-        return JpaMemberRepository.findById(id);
+        return jpaMemberRepository.findById(id);
         /*return Optional.ofNullable(selectFrom(member)
                 .where(member.id.eq(id))
                 .fetchOne());*/
@@ -30,8 +30,7 @@ public class JpaMemberQuerydslRepository extends QuerydslRepositorySupport imple
     }
 
     public List<Member> findAll() {
-        return JpaMemberRepository.findAll();
-//        return selectFrom(member).fetch();
+        return jpaMemberRepository.findAll();
     }
 
     public Optional<Member> findByUsername(String loginId) {
@@ -43,9 +42,7 @@ public class JpaMemberQuerydslRepository extends QuerydslRepositorySupport imple
     }
 
     public Member save(Member member) {
-        member.setMemberType(MemberType.NOMAL);
-        JpaMemberRepository.save(member);
-        return member;
+        return jpaMemberRepository.save(member);
     }
 
     public void update(Long memberId, MemberUpdateDto updateParam) {
@@ -58,11 +55,11 @@ public class JpaMemberQuerydslRepository extends QuerydslRepositorySupport imple
     }
 
     public long count() {
-        return selectFrom(member)
-                .fetchCount();
+        return jpaMemberRepository.count();
     }
 
     public void delete(Member member) {
-        JpaMemberRepository.delete(member);
+        jpaMemberRepository.delete(member);
     }
 }
+

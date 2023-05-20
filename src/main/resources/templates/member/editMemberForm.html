@@ -1,15 +1,11 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <link th:href="@{/css/bootstrap.min.css}"
           href="../css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .container {
-            max-width: 560px;
-        }
         .field-error {
-            border-color: #dc3545;
             color: #dc3545;
         }
     </style>
@@ -19,46 +15,48 @@
 <div class="container">
 
     <div class="py-5 text-center">
-        <h2 th:text="#{page.join}">회원 가입</h2>
+        <h2 th:text="#{page.memberModification}">회원 수정</h2>
     </div>
 
-    <h4 class="mb-3" th:text="#{page.userInformationInput}">회원 정보 입력</h4>
+    <hr class="my-4">
 
-    <form action="" th:action th:object="${memberJoinDto}" method="post">
-
-        <div th:if="${#fields.hasGlobalErrors()}">
-            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
-        </div>
+    <form th:action th:object="${memberUpdateDto}" method="board">
 
         <div>
-            <label for="username" th:text="#{label.username}">로그인 ID</label>
+            <label for="id" th:text="#{label.member_id}">Member_ID</label>
+            <input type="text" id="id" th:field="*{id}" class="form-control" readonly>
+        </div>
+        <div>
+            <label for="username" th:text="#{label.userId}">사용자 ID</label>
             <input type="text" id="username" th:field="*{username}" class="form-control"
-                   th:errorclass="${#fields.hasErrors('username')} ? 'field-error' : ''">
-            <div class="field-error" th:errors="*{username}" />
+                   th:errorclass="field-error" readonly>
+            <div class="field-error" th:errors="*{username}"/>
         </div>
         <div>
             <label for="password" th:text="#{label.password}">비밀번호</label>
             <input type="password" id="password" th:field="*{password}" class="form-control"
                    th:errorclass="${#fields.hasErrors('password')} ? 'field-error' : ''">
-            <div class="field-error" th:errors="*{password}" />
+            <div class="field-error" th:errors="*{password}"></div>
         </div>
         <div>
             <label for="confirmPassword" th:text="#{label.confirmPassword}">비밀번호 확인</label>
             <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control"
-                   th:errorclass="${#fields.hasErrors('confirmPassword')} ? 'field-error' : ''">
-            <div class="field-error" th:errors="*{confirmPassword}" />
+                   th:errorclass="${#fields.hasErrors('confirmPassword')} ? 'field-error' : ''" value="">
+            <div class="field-error" th:errors="*{confirmPassword}"></div>
         </div>
+
         <div>
             <label for="name" th:text="#{label.name}">이름</label>
             <input type="text" id="name" th:field="*{name}" class="form-control"
                    th:errorclass="${#fields.hasErrors('name')} ? 'field-error' : ''">
-            <div class="field-error" th:errors="*{name}" />
+            <div class="field-error" th:errors="*{name}"></div>
         </div>
+
         <div>
             <label for="nickName" th:text="#{label.nickName}">별명</label>
             <input type="text" id="nickName" th:field="*{nickName}" class="form-control"
                    th:errorclass="${#fields.hasErrors('nickName')} ? 'field-error' : ''">
-            <div class="field-error" th:errors="*{nickName}" />
+            <div class="field-error" th:errors="*{nickName}"></div>
         </div>
 
 
@@ -66,24 +64,16 @@
 
         <div class="row">
             <div class="col">
-                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{page.join}">회원 가입</button>
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.edit}">수정</button>
             </div>
             <div class="col">
                 <button class="w-100 btn btn-secondary btn-lg" onclick="location.href='items.html'"
                         th:onclick="|location.href='@{/}'|"
-                        type="button" th:text="#{button.cancel}">취소</button>
+                        type="button" th:text="#{button.cancel}">취소
+                </button>
             </div>
         </div>
 
     </form>
-
-    <div th:if="${errorMessage}" class="alert alert-danger">
-        <p th:text="${errorMessage}"></p>
-    </div>
-<!--    <script th:if="${errorMessage}">-->
-<!--        alert([[${errorMessage}]]);-->
-<!--    </script>-->
-
-</div> <!-- /container -->
 </body>
 </html>

@@ -1,0 +1,91 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 1000px;
+        }
+        .py-6 {
+            padding-top: 30px;
+        }
+        .float-end {
+            float: right;
+        }
+        .pagination {
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="py-6 text-center">
+        <h2>글 목록</h2>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary float-end"
+                    onclick="location.href='addBoardForm.html'"
+                    th:onclick="|location.href='@{/boards/add}'|"
+                    type="button">글 등록</button>
+            <div>현재 페이지: <span th:text="${currPage}"></span></div>
+            <div>총 게시물 수: <span th:text="${totalPostCnt}"></span></div>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>no</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>등록일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="board : ${boardList}"
+        onclick="location.href='detailBoardForm.html'"
+        th:onclick="|location.href='@{/boards/detail/{id}(id=${board.id})}'|"
+        style="cursor:pointer">
+        <td th:text="${board.id}"></td>
+        <td th:text="${board.title}"></td>
+        <td th:text="${board.author}"></td>
+        <td th:text="${board.created_date}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="container">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" th:href="@{/boards/board?page=1}" aria-label="Previous">
+                    <span aria-hidden="true">처음</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" th:href="@{/boards/board(page=${currPage - 1})}" aria-label="Previous">
+                    <span aria-hidden="true">이전</span>
+                </a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == currPage ? 'active' : ''}">
+            <a class="page-link" th:href="@{/boards/board(page=${currPage})}">
+                    <span th:text="${currPage}"></span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" th:href="@{/boards/board(page=${currPage + 1})}" aria-label="Next">
+                    <span aria-hidden="true">다음</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" th:href="@{/boards/board(page=${lastPage})}" aria-label="Next">
+                    <span aria-hidden="true">마지막</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

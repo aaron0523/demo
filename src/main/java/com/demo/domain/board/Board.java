@@ -1,6 +1,7 @@
-package com.demo.domain.post;
+package com.demo.domain.board;
 
 import com.demo.domain.member.Member;
+import com.demo.util.UploadFile;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -9,16 +10,18 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "post")
+@Table(name = "board")
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-public class Post {
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "board_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,7 +30,7 @@ public class Post {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PostType postType;
+    private BoardType boardType;
 
     @Column(nullable = false)
     private String title;
@@ -37,7 +40,7 @@ public class Post {
 
     private String youtubeUrl;
 
-    private String imageUrl;
+    private String attachFileUrl; // 파일 경로를 저장할 필드
 
     @CreatedDate
     @Column(name = "created_date")
@@ -46,4 +49,14 @@ public class Post {
     @LastModifiedDate
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
+
+    // 파일 업로드를 위한 필드
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<UploadFile> uploadFiles = new ArrayList<>();
+
+    public void addUploadFile(UploadFile uploadFile) {
+        uploadFiles.add(uploadFile);
+        uploadFile.setBoard(this);
+    }
+
 }
