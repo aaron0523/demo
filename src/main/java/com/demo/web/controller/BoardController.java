@@ -8,7 +8,6 @@ import com.demo.util.FileStore;
 import com.demo.util.UploadFile;
 import com.demo.web.SessionConst;
 import com.demo.web.dto.board.BoardCreatedDto;
-import com.demo.web.dto.board.BoardDto;
 import com.demo.web.dto.board.BoardUpdatedDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ import java.util.Optional;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/boards")
+@RequestMapping("/community")
 public class BoardController {
 
     private static final int PAGE_SIZE = 10;
@@ -38,33 +37,29 @@ public class BoardController {
     private final FileStore fileStore;
 
     @GetMapping("/board")
-    public String getAllBoards(Model model, @RequestParam(defaultValue = "0") int startPage) {
-        Pageable pageable = PageRequest.of(startPage, PAGE_SIZE, Sort.by("id").descending());
-        Page<BoardDto> boardPage = boardService.getAllBoards(pageable);
+    public String getAllBoards(Model model,
+                               @RequestParam(value = "boardType", defaultValue = "COMMUNITY") String boardType,
+                               @RequestParam(defaultValue = "0") int page) {
+        if (page < 0) {
+            page = 0;
+        }
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("id").descending());
+        Page<Board> boardPage = boardService.getBoardsByType(pageable, boardType);
 
-        int currPage = boardPage.getNumber() + 1; // 현재 페이지 번호
-        long totalPostCnt = boardPage.getTotalElements(); // 총 게시글 수
-        int lastPage = boardPage.getTotalPages(); // 마지막 페이지 번호
-
-        int prePage = Math.max(currPage - 1, 1); // 이전 페이지 번호
-        boolean hasPrePage = currPage > 1; // 이전 페이지 유무
-
-        model.addAttribute("boardList", boardPage.getContent());
-        model.addAttribute("currPage", currPage);
-        model.addAttribute("totalPostCnt", totalPostCnt);
-        model.addAttribute("prePage", prePage);
-        model.addAttribute("hasPrePage", hasPrePage);
-        model.addAttribute("lastPage", lastPage);
+        model.addAttribute("boardPage", boardPage);
 
         return "community/board";
     }
-
 
     @GetMapping("/detail/{id}")
     public String getBoardById(@PathVariable("id") Long id, Model model) {
         Optional<Board> board = boardService.getBoardById(id);
         if (board.isPresent()) {
-            model.addAttribute("board", board.get());
+            Board boardData = board.get();
+
+            model.addAttribute("board", boardData);
+            model.addAttribute("boardType", boardData.getBoardType().name());
+
             return "community/detailBoardForm";
         } else {
             return "error";
@@ -74,26 +69,32 @@ public class BoardController {
     @GetMapping("/add")
     public String addForm(Model model, HttpSession session) {
         Member loggedInMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        String currentUser = loggedInMember.getNickName();
+        Long currentUserId = loggedInMember.getId();
+        String currentUserNickname = loggedInMember.getNickName();
         model.addAttribute("createDto", new BoardCreatedDto());
-        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("currentUserId", currentUserId);
+        model.addAttribute("currentUserNickname", currentUserNickname);
 
         return "community/addBoardForm";
     }
 
     @PostMapping("/add")
-    public String save(@ModelAttribute BoardCreatedDto createDto, @RequestParam("authorId") Long authorId,
-                       @RequestParam("files") List<MultipartFile> files) {
+    public String save(@ModelAttribute BoardCreatedDto createDto,
+                       @RequestParam("id") Long id,
+                       @RequestParam("files") List<MultipartFile> files,
+                       @RequestParam("boardType") String boardType) {
         try {
-            List<UploadFile> uploadFiles = fileStore.storeFiles(files, BoardType.valueOf(createDto.getBoardType()));
-            boardService.createBoard(createDto, authorId, uploadFiles);
+            BoardType type = BoardType.valueOf(boardType);
+            List<UploadFile> uploadFiles = fileStore.storeFiles(files, type);
+            boardService.createBoard(createDto, id, uploadFiles);
         } catch (IOException e) {
             log.error("게시물 저장 중 오류가 발생했습니다.", e);
             return "error";
         }
 
-        return "redirect:/boards/board";
+        return "redirect:/community/board";
     }
+
 
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable("id") Long id, Model model) {
@@ -116,13 +117,13 @@ public class BoardController {
             log.error("게시물 업데이트 중 오류가 발생했습니다.", e);
             return "error";
         }
-        return "redirect:/boards/detail/" + id;
+        return "redirect:/community/detail/" + id;
     }
 
     @PostMapping("/delete/{id}")
     public String deleteBoard(@PathVariable("id") Long id) {
         boardService.deleteBoard(id);
-        return "redirect:/boards/board";
+        return "redirect:/community/board";
     }
 
     @GetMapping("/error")

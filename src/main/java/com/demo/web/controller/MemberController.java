@@ -40,7 +40,7 @@ public class MemberController {
             memberJoinDto = new MemberJoinDto();
         }
         model.addAttribute("memberJoinDto", memberJoinDto);
-        return "members/addMemberForm";
+        return "member/addMemberForm";
     }
 
     @PostMapping("/add")
@@ -51,7 +51,7 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             // 입력값이 유효하지 않을 경우 세션에 값 저장
             session.setAttribute("memberJoinDto", memberJoinDto);
-            return "redirect:/members/add";
+            return "redirect:/member/add";
         }
 
         // 회원 정보 저장
@@ -68,7 +68,7 @@ public class MemberController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             // 입력값이 유효하지 않을 경우 세션에 값 저장
             session.setAttribute("memberJoinDto", memberJoinDto);
-            return "redirect:/members/add";
+            return "redirect:/member/add";
         }
 
         return "redirect:/";
@@ -89,7 +89,7 @@ public class MemberController {
 
         model.addAttribute("memberUpdateDto", memberUpdateDto);
 
-        return "members/editMemberForm";
+        return "member/editMemberForm";
     }
 
     @PostMapping("/edit")
@@ -97,7 +97,7 @@ public class MemberController {
         // 폼 입력값 검증
         new MemberUpdateDtoValidator().validate(memberUpdateDto, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "members/editMemberForm";
+            return "member/editMemberForm";
         }
 
         // 현재 로그인된 회원 정보 가져오기

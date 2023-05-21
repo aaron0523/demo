@@ -1,9 +1,12 @@
 package com.demo.domain.repository.jpa.board;
 
 import com.demo.domain.board.Board;
+import com.demo.domain.board.BoardType;
 import com.demo.domain.repository.support.BoardRepository;
 import com.demo.domain.repository.support.QuerydslRepositorySupport;
+import com.demo.web.dto.board.BoardPagingDto;
 import com.demo.web.dto.board.BoardUpdatedDto;
+import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -55,4 +58,12 @@ public class JpaBoardRepository extends QuerydslRepositorySupport implements Boa
     public long count() {
         return jpaBoardRepository.count();
     }
+
+    public Page<Board> getBoardsByType(BoardType boardType, Pageable pageable) {
+        JPAQuery<Board> query = selectFrom(board)
+                .where(board.boardType.eq(boardType))
+                .orderBy(board.id.desc());
+        return applyPagination(pageable, q -> query);
+    }
+
 }

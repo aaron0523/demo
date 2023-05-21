@@ -40,8 +40,6 @@ public class Board {
 
     private String youtubeUrl;
 
-    private String attachFileUrl; // 파일 경로를 저장할 필드
-
     @CreatedDate
     @Column(name = "created_date")
     private LocalDateTime createdDate;

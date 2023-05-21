@@ -16,7 +16,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class MemberServiceImp implements MemberService {
+public class MemberServiceImpl implements MemberService {
 
     private final JpaMemberRepository jpaMemberRepository;
 

@@ -14,6 +14,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class FileStore {
@@ -26,13 +27,17 @@ public class FileStore {
     }
 
     public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles, BoardType boardType) throws IOException {
-        List<UploadFile> storeFileResult = new ArrayList<>();
-        for (MultipartFile multipartFile : multipartFiles) {
-            if (!multipartFile.isEmpty()) {
-                storeFileResult.add(storeFile(multipartFile, boardType));
-            }
-        }
-        return storeFileResult;
+        return multipartFiles.stream()
+                .filter(multipartFile -> !multipartFile.isEmpty())
+                .map(multipartFile -> {
+                    try {
+                        return storeFile(multipartFile, boardType);
+                    } catch (IOException e) {
+                        throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
+                    }
+                })
+                .collect(Collectors.toList());
+
     }
 
     public UploadFile storeFile(MultipartFile multipartFile, BoardType boardType) throws IOException {
@@ -40,7 +45,10 @@ public class FileStore {
             return null;
         }
 
+        // StringUtils.cleanPath() : 상위 디렉토리 표시(../)나 현재 디렉토리 표시(./) 등을 처리하고, 경로 구분자를 표준화하여 반환
         String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        // createStoreFileName() : 원본 파일 이름에서 파일 확장자(extension)를 추출한 후,
+        // UUID(Universally Unique Identifier)를 생성하여 파일 이름과 결합
         String storeFileName = createStoreFileName(originalFilename);
         String filePath = getFilePath(storeFileName, boardType);
 
@@ -51,7 +59,9 @@ public class FileStore {
 
     public void deleteFile(String fileName, BoardType boardType) throws IOException {
         String filePath = getFilePath(fileName, boardType);
-        Files.deleteIfExists(Path.of(filePath));
+        if (Files.exists(Path.of(filePath))) {
+            Files.delete(Path.of(filePath));
+        }
     }
 
     private String createStoreFileName(String originalFilename) {

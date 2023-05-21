@@ -7,31 +7,34 @@ import com.demo.domain.repository.support.MemberRepository;
 import com.demo.domain.repository.support.BoardRepository;
 import com.demo.util.UploadFile;
 import com.demo.web.dto.board.BoardCreatedDto;
-import com.demo.web.dto.board.BoardDto;
+import com.demo.web.dto.board.BoardPagingDto;
 import com.demo.web.dto.board.BoardUpdatedDto;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class BoardServiceImp implements BoardService {
+public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
 
-    public BoardServiceImp(BoardRepository boardRepository, MemberRepository memberRepository) {
+    public BoardServiceImpl(BoardRepository boardRepository, MemberRepository memberRepository) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
     }
 
-    public Page<BoardDto> getAllBoards(Pageable pageable) {
-        Page<Board> boardPage = boardRepository.findAll(pageable);
-        return boardPage.map(board -> convertToBoardDto(board, pageable));
+    public Page<Board> getBoardsByType(Pageable pageable, String boardType) {
+        BoardType type = BoardType.valueOf(boardType);
+        return boardRepository.getBoardsByType(type, pageable);
     }
 
     public Optional<Board> getBoardById(Long boardId) {
@@ -42,15 +45,17 @@ public class BoardServiceImp implements BoardService {
         return boardRepository.findByAuthorId(authorId);
     }
 
-    public Board createBoard(BoardCreatedDto createDto, Long authorId, List<UploadFile> uploadFiles) {
-        Member author = findMemberById(authorId);
+    public Board createBoard(BoardCreatedDto createDto, Long id, List<UploadFile> uploadFiles) {
+        Member author = findMemberById(id);
         Board board = new Board();
         board.setAuthor(author);
         board.setTitle(createDto.getTitle());
         board.setContent(createDto.getContent());
         board.setYoutubeUrl(createDto.getYoutubeUrl());
         board.setBoardType(BoardType.valueOf(createDto.getBoardType()));
-        board.setUploadFiles(uploadFiles);
+        for (UploadFile uploadFile : uploadFiles) {
+            board.addUploadFile(uploadFile);
+        }
         return boardRepository.save(board);
     }
 
@@ -71,17 +76,20 @@ public class BoardServiceImp implements BoardService {
 
     private Member findMemberById(Long authorId) {
         return memberRepository.findById(authorId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 작성자 ID입니다: " + authorId));
+                .orElseThrow(() -> new IllegalStateException("유효하지 않은 작성자 ID입니다: " + authorId));
     }
 
     private Board findBoardById(Long boardId) {
         return boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글 ID입니다: " + boardId));
+                .orElseThrow(() -> new IllegalStateException("유효하지 않은 게시글 ID입니다: " + boardId));
     }
 
-    private BoardDto convertToBoardDto(Board board, Pageable pageable) {
-        BoardDto boardDto = new BoardDto();
-        boardDto.setBoardPage(boardRepository.findAll(pageable));
-        return boardDto;
+    private BoardPagingDto convertToBoardDto(Board board) {
+        BoardPagingDto boardPagingDto = new BoardPagingDto();
+        // Collections.singletonList(board) : board 객체를 요소로 갖는 길이 1인 리스트를 생성
+        // new PageImpl<>() : 형변환을 위해 사용
+        Page<Board> boardPage = new PageImpl<>(Collections.singletonList(board));
+        boardPagingDto.setBoardPage(boardPage);
+        return boardPagingDto;
     }
 }

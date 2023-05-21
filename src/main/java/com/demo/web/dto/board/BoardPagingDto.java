@@ -5,6 +5,6 @@ import lombok.Data;
 import org.springframework.data.domain.Page;
 
 @Data
-public class BoardDto {
+public class BoardPagingDto {
     private Page<Board> boardPage;
 }

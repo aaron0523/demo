@@ -1,6 +1,8 @@
 package com.demo.domain.repository.support;
 
 import com.demo.domain.board.Board;
+import com.demo.domain.board.BoardType;
+import com.demo.web.dto.board.BoardPagingDto;
 import com.demo.web.dto.board.BoardUpdatedDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +17,5 @@ public interface BoardRepository {
     Board save(Board board);
     void updateBoard(Long boardId, BoardUpdatedDto boardUpdateDto);
     void delete(Board board);
+    Page<Board> getBoardsByType(BoardType boardType, Pageable pageable);
 }

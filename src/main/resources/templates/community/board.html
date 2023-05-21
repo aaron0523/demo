@@ -26,66 +26,60 @@
         <div class="col">
             <button class="btn btn-primary float-end"
                     onclick="location.href='addBoardForm.html'"
-                    th:onclick="|location.href='@{/boards/add}'|"
+                    th:onclick="|location.href='@{/community/add}'|"
                     type="button">글 등록</button>
-            <div>현재 페이지: <span th:text="${currPage}"></span></div>
-            <div>총 게시물 수: <span th:text="${totalPostCnt}"></span></div>
+            <div>현재 페이지: <span th:text="${boardPage.number + 1}"></span></div>
+            <div>총 게시물 수: <span th:text="${boardPage.totalElements}"></span></div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>작성일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="board : ${boardPage.content}">
+                    <td th:text="${board.id}"></td>
+                    <td>
+                        <a th:href="@{/community/detail/{id}(id=${board.id})}"
+                           th:text="${board.title}"></a>
+                    </td>
+                    <td th:text="${board.author.nickName}"></td>
+                    <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-center">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item" th:class="${boardPage.first ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:if="${not boardPage.first}"
+                               th:href="@{/community/board?page=0&size=10}" tabindex="-1">처음</a>
+                        </li>
+                        <li class="page-item" th:class="${boardPage.first ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:if="${not boardPage.first}"
+                               th:href="@{'/community/board?page=' + (${boardPage.number} - 1) + '&size=10'}">이전</a>
+                        </li>
+                        <li class="page-item" th:class="${boardPage.last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:if="${not boardPage.last}"
+                               th:href="@{'/community/board?page=' + (${boardPage.number} + 1) + '&size=10'}">다음</a>
+                        </li>
+                        <li class="page-item" th:class="${boardPage.last ? 'disabled' : ''}">
+                            <a class="page-link"
+                               th:if="${not boardPage.last}"
+                               th:href="@{'/community/board?page=' + (${boardPage.totalPages} - 1) + '&size=10'}"
+                               tabindex="-1">끝</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
-</div>
-
-<table class="table">
-    <thead>
-    <tr>
-        <th>no</th>
-        <th>제목</th>
-        <th>작성자</th>
-        <th>등록일</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="board : ${boardList}"
-        onclick="location.href='detailBoardForm.html'"
-        th:onclick="|location.href='@{/boards/detail/{id}(id=${board.id})}'|"
-        style="cursor:pointer">
-        <td th:text="${board.id}"></td>
-        <td th:text="${board.title}"></td>
-        <td th:text="${board.author}"></td>
-        <td th:text="${board.created_date}"></td>
-    </tr>
-    </tbody>
-</table>
-
-<div class="container">
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            <li class="page-item">
-                <a class="page-link" th:href="@{/boards/board?page=1}" aria-label="Previous">
-                    <span aria-hidden="true">처음</span>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" th:href="@{/boards/board(page=${currPage - 1})}" aria-label="Previous">
-                    <span aria-hidden="true">이전</span>
-                </a>
-            </li>
-            <li class="page-item" th:classappend="${currentPage == currPage ? 'active' : ''}">
-            <a class="page-link" th:href="@{/boards/board(page=${currPage})}">
-                    <span th:text="${currPage}"></span>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" th:href="@{/boards/board(page=${currPage + 1})}" aria-label="Next">
-                    <span aria-hidden="true">다음</span>
-                </a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" th:href="@{/boards/board(page=${lastPage})}" aria-label="Next">
-                    <span aria-hidden="true">마지막</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 </div>
 </body>
 </html>

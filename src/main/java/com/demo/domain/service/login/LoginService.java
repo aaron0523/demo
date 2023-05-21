@@ -1,7 +1,7 @@
 package com.demo.domain.service.login;
 
 import com.demo.domain.member.Member;
-import com.demo.domain.service.member.MemberServiceImp;
+import com.demo.domain.service.member.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LoginService {
 
-    private final MemberServiceImp memberService;
+    private final MemberServiceImpl memberService;
 
     /**
      * @return null 로그인 실패
