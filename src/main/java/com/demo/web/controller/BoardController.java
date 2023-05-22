@@ -15,11 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
@@ -67,13 +70,17 @@ public class BoardController {
     }
 
     @GetMapping("/add")
-    public String addForm(Model model, HttpSession session) {
+    public String addForm(Model model, HttpSession session, HttpServletResponse response) {
         Member loggedInMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
         Long currentUserId = loggedInMember.getId();
         String currentUserNickname = loggedInMember.getNickName();
+
         model.addAttribute("createDto", new BoardCreatedDto());
         model.addAttribute("currentUserId", currentUserId);
         model.addAttribute("currentUserNickname", currentUserNickname);
+
+        // 헤더에 캐시 제어 설정 추가
+        response.addHeader(HttpHeaders.CACHE_CONTROL, "no-cache");
 
         return "community/addBoardForm";
     }
@@ -107,12 +114,12 @@ public class BoardController {
         }
     }
 
-    @PostMapping("/edit/{id}")
     public String update(@PathVariable("id") Long id, @ModelAttribute BoardUpdatedDto updateDto,
-                         @RequestParam("files") List<MultipartFile> files) {
+                         @RequestParam("files") List<MultipartFile> files,
+                         @RequestParam(value = "filesToDelete", required = false) List<String> filesToDelete) {
         try {
             List<UploadFile> uploadFiles = fileStore.storeFiles(files, BoardType.valueOf(updateDto.getBoardType()));
-            boardService.updateBoard(id, updateDto, uploadFiles);
+            boardService.updateBoard(id, updateDto, uploadFiles, filesToDelete);
         } catch (IOException e) {
             log.error("게시물 업데이트 중 오류가 발생했습니다.", e);
             return "error";

@@ -1,5 +1,6 @@
 package com.demo.domain.service.member;
 
+import com.demo.domain.exception.DuplicateMemberException;
 import com.demo.domain.member.Member;
 import com.demo.web.dto.member.MemberUpdateDto;
 
@@ -10,7 +11,7 @@ public interface MemberService {
     List<Member> findAll();
     Optional<Member> findById(Long id);
     Optional<Member> findByUsername(String username);
-    Member join(Member member);
+    Member join(Member member) throws DuplicateMemberException;
     void update(Long memberId, MemberUpdateDto memberUpdateDto);
     void delete(Member member);
 }

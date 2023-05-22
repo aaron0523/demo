@@ -1,5 +1,6 @@
 package com.demo.web.controller;
 
+import com.demo.domain.exception.DuplicateMemberException;
 import com.demo.domain.member.Member;
 import com.demo.domain.service.member.MemberService;
 import com.demo.web.SessionConst;
@@ -31,27 +32,26 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/add")
-    public String addForm(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    public String addForm(Model model, HttpSession session) {
         MemberJoinDto memberJoinDto = (MemberJoinDto) session.getAttribute("memberJoinDto");
-        log.info("로그인 ID =========> {}", Optional.ofNullable(memberJoinDto).map(MemberJoinDto::getUsername).orElse(""));
-//        log.info("로그인 ID =========> {}", memberJoinDto != null ? (memberJoinDto.getUsername() != null ? memberJoinDto.getUsername() : "") : "");
         if (memberJoinDto == null) {
             memberJoinDto = new MemberJoinDto();
         }
+
         model.addAttribute("memberJoinDto", memberJoinDto);
         return "member/addMemberForm";
     }
 
     @PostMapping("/add")
     public String save(@Valid @ModelAttribute MemberJoinDto memberJoinDto, BindingResult bindingResult,
-                       RedirectAttributes redirectAttributes, HttpSession session) {
+                       Model model, HttpSession session) {
         // 폼 입력값 검증
         new MemberJoinDtoValidator().validate(memberJoinDto, bindingResult);
         if (bindingResult.hasErrors()) {
             // 입력값이 유효하지 않을 경우 세션에 값 저장
             session.setAttribute("memberJoinDto", memberJoinDto);
-            return "redirect:/member/add";
+            // 검증 후 return 은 redirect 하면 안된다.
+            return "member/addMemberForm";
         }
 
         // 회원 정보 저장
@@ -60,18 +60,20 @@ public class MemberController {
         member.setPassword(memberJoinDto.getPassword());
         member.setName(memberJoinDto.getName());
         member.setNickName(memberJoinDto.getNickName());
+        member.setCreatedDate(LocalDateTime.now());
 
         try {
             memberService.join(member);
-        } catch (IllegalStateException e) {
-            // 예외 메시지를 "errorMessage"라는 이름으로 세션에 추가
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (DuplicateMemberException e) {
             // 입력값이 유효하지 않을 경우 세션에 값 저장
             session.setAttribute("memberJoinDto", memberJoinDto);
-            return "redirect:/member/add";
+            model.addAttribute("errorMessage", e.getMessage());
+            return "member/addMemberForm";
         }
+        log.info("로그인 ID =========> {}", Optional.ofNullable(memberJoinDto).map(MemberJoinDto::getUsername).orElse(""));
+//        log.info("로그인 ID =========> {}", memberJoinDto != null ? (memberJoinDto.getUsername() != null ? memberJoinDto.getUsername() : "") : "");
 
-        return "redirect:/";
+        return "home";
     }
 
     @GetMapping("/edit")

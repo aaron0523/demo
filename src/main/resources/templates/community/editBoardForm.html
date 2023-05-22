@@ -24,7 +24,8 @@
         <br/>
         <div>
             <label for="author">작성자</label>
-            <input type="text" id="author" name="author" class="form-control" th:value="*{author}" readonly/>
+            <input type="text" id="author" name="author" class="form-control" th:value="*{author.getNickName()}"
+                   readonly/>
         </div>
         <br/>
         <div>
@@ -41,6 +42,20 @@
         <br/>
         <div>
             <label for="files">이미지 업로드</label>
+            <input type="file" id="files" name="files" multiple accept="image/*" class="form-control-file"/>
+        </div>
+        <div>
+            <label for="files">기존 이미지</label>
+            <div th:each="file, fileStat : ${board.uploadFiles}">
+                <img th:src="@{'/images/community/' + ${file.storeFileName}}" width="100%"/>
+                <input type="checkbox" th:name="filesToDelete" th:value="${file.storeFileName}"
+                       class="form-check-input"/>
+                <label class="form-check-label">이미지 삭제</label>
+            </div>
+        </div>
+        <br/>
+        <div>
+            <label for="files">새로운 이미지 업로드</label>
             <input type="file" id="files" name="files" multiple accept="image/*" class="form-control-file"/>
         </div>
         <hr class="my-4">

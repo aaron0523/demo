@@ -7,17 +7,17 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MemberJoinDto {
 
-    @NotNull
+//    @NotNull
     private String username;
 
-    @NotNull
+//    @NotNull
     private String password;
     private String confirmPassword;
 
-    @NotNull
+//    @NotNull
     private String name;
 
-    @NotNull
+//    @NotNull
     private String nickName;
 
 }

@@ -8,6 +8,8 @@
             max-width: 700px;
         }
     </style>
+    <!-- 캐시 관련 헤더 설정 -->
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 </head>
 <body>
 <div class="container">
@@ -43,7 +45,8 @@
             <th style="width: 15%">이미지</th>
             <td colspan="3">
                 <div th:each="file : ${board.uploadFiles}">
-                    <img th:src="@{'/images/community/' + ${file.storeFileName}}" width="100%"/>
+                    <img th:src="@{'/images/community/' + ${file.storeFileName}}"
+                         th:attr="src=@{'/images/community/' + ${file.storeFileName}}, data-cache-control='no-cache'" width="100%"/>
                 </div>
             </td>
         </tr>

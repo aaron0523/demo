@@ -1,5 +1,7 @@
 package com.demo.domain.service.member;
 
+import com.demo.domain.exception.DuplicateMemberException;
+import com.demo.domain.exception.MemberNotFoundException;
 import com.demo.domain.member.Member;
 import com.demo.domain.member.MemberType;
 import com.demo.domain.repository.jpa.member.JpaMemberRepository;
@@ -24,20 +26,19 @@ public class MemberServiceImpl implements MemberService {
      * 회원가입
      */
     @Transactional
-    public Member join(Member member) {
+    public Member join(Member member) throws DuplicateMemberException {
         validateDuplicateMember(member);
         member.setMemberType(MemberType.NORMAL);
         jpaMemberRepository.save(member);
         return member;
     }
 
-    private void validateDuplicateMember(Member member) {
+    private void validateDuplicateMember(Member member) throws DuplicateMemberException {
         Optional<Member> findMember = jpaMemberRepository.findByUsername(member.getUsername());
         if (findMember.isPresent()) {
-            throw new IllegalStateException("이미 존재하는 회원 ID 입니다.");
+            throw new DuplicateMemberException("이미 존재하는 회원 ID입니다.");
         }
     }
-
     /**
      * 회원 전체 조회
      */
@@ -65,10 +66,10 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     public void update(Long memberId, MemberUpdateDto memberUpdateDto) {
-        Member findMember = jpaMemberRepository.findById(memberId).orElse(null);
-        if (findMember != null) {
-            jpaMemberRepository.update(memberId, memberUpdateDto);
-        }
+        Member findMember = jpaMemberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException("해당 회원을 찾을 수 없습니다. 회원 ID: " + memberId));
+
+        jpaMemberRepository.update(memberId, memberUpdateDto);
     }
 
     @Transactional

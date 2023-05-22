@@ -15,6 +15,6 @@ public interface BoardService {
     Optional<Board> getBoardById(Long boardId);
     List<Board> getBoardsByAuthorId(Long authorId);
     Board createBoard(BoardCreatedDto createDto, Long authorId, List<UploadFile> uploadFiles);
-    void updateBoard(Long boardId, BoardUpdatedDto updateDto, List<UploadFile> uploadFiles);
+    void updateBoard(Long boardId, BoardUpdatedDto updateDto, List<UploadFile> uploadFiles, List<String> filesToDelete);
     void deleteBoard(Long boardId);
 }

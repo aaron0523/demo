@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -59,15 +60,29 @@ public class BoardServiceImpl implements BoardService {
         return boardRepository.save(board);
     }
 
-    public void updateBoard(Long boardId, BoardUpdatedDto updateDto, List<UploadFile> uploadFiles) {
+    public void updateBoard(Long boardId, BoardUpdatedDto updateDto, List<UploadFile> uploadFiles, List<String> filesToDelete) {
         Board board = findBoardById(boardId);
         board.setTitle(updateDto.getTitle());
         board.setContent(updateDto.getContent());
         board.setYoutubeUrl(updateDto.getYoutubeUrl());
         board.setBoardType(BoardType.valueOf(updateDto.getBoardType()));
         board.setUploadFiles(uploadFiles);
+
+        if (filesToDelete != null && !filesToDelete.isEmpty()) {
+            List<Long> fileIdsToDelete = new ArrayList<>();
+            for (String storeFileName : filesToDelete) {
+                Optional<UploadFile> optionalUploadFile = Optional.ofNullable(board.findUploadFileByStoreFileName(storeFileName));
+                if (optionalUploadFile.isPresent()) {
+                    UploadFile uploadFile = optionalUploadFile.get();
+                    fileIdsToDelete.add(uploadFile.getId());
+                }
+            }
+            board.removeUploadFilesByIds(fileIdsToDelete);
+        }
+
         boardRepository.save(board);
     }
+
 
     public void deleteBoard(Long boardId) {
         Board board = findBoardById(boardId);

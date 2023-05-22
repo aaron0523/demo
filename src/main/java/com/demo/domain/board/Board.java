@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Entity
@@ -57,4 +58,23 @@ public class Board {
         uploadFile.setBoard(this);
     }
 
+    public UploadFile findUploadFileByStoreFileName(String storeFileName) {
+        for (UploadFile uploadFile : uploadFiles) {
+            if (uploadFile.getStoreFileName().equals(storeFileName)) {
+                return uploadFile;
+            }
+        }
+        return null;
+    }
+
+    public void removeUploadFilesByIds(List<Long> fileIds) {
+        Iterator<UploadFile> iterator = uploadFiles.iterator();
+        while (iterator.hasNext()) {
+            UploadFile uploadFile = iterator.next();
+            if (fileIds.contains(uploadFile.getId())) {
+                iterator.remove();
+                uploadFile.setBoard(null);
+            }
+        }
+    }
 }
