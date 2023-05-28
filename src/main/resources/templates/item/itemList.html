@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
+    <title>Item List</title>
+    <style>
+        .container {
+            max-width: 1000px;
+        }
+
+        .py-6 {
+            padding-top: 30px;
+        }
+
+        .pagination {
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="py-6 text-center">
+        <h2 th:text="#{page.itemList}">상품 리스트</h2>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock Quantity</th>
+            <th>Type</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterate through items and populate the table -->
+        <tr th:each="item : ${items}">
+            <td th:text="${item.id}"></td>
+            <td th:text="${item.name}"></td>
+            <td th:text="${item.price}"></td>
+            <td th:text="${item.stockQuantity}"></td>
+            <td th:text="${item.type}"></td>
+            <td>
+                <button class="btn btn-warning float-end"
+                        th:onclick="|location.href='@{/items/{itemId}/edit(itemId=${item.id})}'|"
+                        type="button" th:text="#{item.edit}">상품 수정
+                </button>
+            </td>
+            <td>
+                <button class="btn btn-warning float-end"
+                        th:onclick="|location.href='@{/items/{itemId}/delete(itemId=${item.id})}'|"
+                        type="button" th:text="#{item.delete}">상품 삭제
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <br>
+
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item" th:class="${itemPage.first ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:if="${not itemPage.first}"
+                       th:href="@{/items?page=0&size=10}" tabindex="-1"
+                       th:text="#{pagination.firstTime}">처음</a>
+                </li>
+                <li class="page-item" th:class="${itemPage.first ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:if="${not itemPage.first}"
+                       th:href="@{'/items?page=' + (${itemPage.number} - 1) + '&size=10'}"
+                       th:text="#{pagination.previous}">이전</a>
+                </li>
+                <li class="page-item" th:class="${itemPage.last ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:if="${not itemPage.last}"
+                       th:href="@{'/items?page=' + (${itemPage.number} + 1) + '&size=10'}"
+                       th:text="#{pagination.next}">다음</a>
+                </li>
+                <li class="page-item" th:class="${itemPage.last ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:if="${not itemPage.last}"
+                       th:href="@{'/items?page=' + (${itemPage.totalPages} - 1) + '&size=10'}"
+                       tabindex="-1" th:text="#{pagination.end}">끝</a>
+                </li>
+            </ul>
+
+            <button class="btn btn-primary"
+                    th:onclick="|location.href='@{/items/new}'|"
+                    type="button">Create New Item
+            </button>
+        </nav>
+    </div>
+
+    <br>
+
+    <div class="d-flex justify-content-center">
+        <button class="btn btn-info"
+                th:onclick="|location.href='@{/}'|"
+                type="button">Home
+        </button>
+    </div>
+</div> <!-- container -->
+</body>
+</html>

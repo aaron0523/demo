@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class BoardCreatedDto {
-    private Long authorId;
+    private Long id;
     private String boardType;
     private String title;
     private String content;

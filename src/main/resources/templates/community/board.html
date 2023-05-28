@@ -20,23 +20,23 @@
 <body>
 <div class="container">
     <div class="py-6 text-center">
-        <h2>글 목록</h2>
+        <h2 th:text="#{board.list}">글 목록</h2>
     </div>
     <div class="row">
         <div class="col">
             <button class="btn btn-primary float-end"
                     onclick="location.href='addBoardForm.html'"
                     th:onclick="|location.href='@{/community/add}'|"
-                    type="button">글 등록</button>
-            <div>현재 페이지: <span th:text="${boardPage.number + 1}"></span></div>
-            <div>총 게시물 수: <span th:text="${boardPage.totalElements}"></span></div>
+                    type="button" th:text="#{board.add}">글 등록</button>
+            <div th:text="#{board.currentPage}">현재 페이지: <span th:text="${boardPage.number + 1}"></span></div>
+            <div th:text="#{board.totalNumberPosts}">총 게시물 수: <span th:text="${boardPage.totalElements}"></span></div>
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>번호</th>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
+                    <th th:text="#{board.number}">번호</th>
+                    <th th:text="#{board.title}">제목</th>
+                    <th th:text="#{board.author}">작성자</th>
+                    <th th:text="#{board.dateCreated}">작성일</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -57,23 +57,26 @@
                         <li class="page-item" th:class="${boardPage.first ? 'disabled' : ''}">
                             <a class="page-link"
                                th:if="${not boardPage.first}"
-                               th:href="@{/community/board?page=0&size=10}" tabindex="-1">처음</a>
+                               th:href="@{/community/board?page=0&size=10}" tabindex="-1"
+                               th:text="#{pagination.firstTime}">처음</a>
                         </li>
                         <li class="page-item" th:class="${boardPage.first ? 'disabled' : ''}">
                             <a class="page-link"
                                th:if="${not boardPage.first}"
-                               th:href="@{'/community/board?page=' + (${boardPage.number} - 1) + '&size=10'}">이전</a>
+                               th:href="@{'/community/board?page=' + (${boardPage.number} - 1) + '&size=10'}"
+                               th:text="#{pagination.previous}">이전</a>
                         </li>
                         <li class="page-item" th:class="${boardPage.last ? 'disabled' : ''}">
                             <a class="page-link"
                                th:if="${not boardPage.last}"
-                               th:href="@{'/community/board?page=' + (${boardPage.number} + 1) + '&size=10'}">다음</a>
+                               th:href="@{'/community/board?page=' + (${boardPage.number} + 1) + '&size=10'}"
+                               th:text="#{pagination.next}">다음</a>
                         </li>
                         <li class="page-item" th:class="${boardPage.last ? 'disabled' : ''}">
                             <a class="page-link"
                                th:if="${not boardPage.last}"
                                th:href="@{'/community/board?page=' + (${boardPage.totalPages} - 1) + '&size=10'}"
-                               tabindex="-1">끝</a>
+                               tabindex="-1" th:text="#{pagination.end}">끝</a>
                         </li>
                     </ul>
                     <button class="btn btn-info"

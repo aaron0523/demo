@@ -3,27 +3,29 @@ package com.demo.web.controller;
 import com.demo.domain.board.Board;
 import com.demo.domain.board.BoardType;
 import com.demo.domain.member.Member;
-import com.demo.domain.service.board.BoardService;
+import com.demo.service.board.BoardService;
 import com.demo.util.FileStore;
 import com.demo.util.UploadFile;
 import com.demo.web.SessionConst;
 import com.demo.web.dto.board.BoardCreatedDto;
 import com.demo.web.dto.board.BoardUpdatedDto;
+import com.demo.web.validator.community.BoardUpdateValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -86,10 +88,17 @@ public class BoardController {
     }
 
     @PostMapping("/add")
-    public String save(@ModelAttribute BoardCreatedDto createDto,
+    public String save(@Valid @ModelAttribute BoardCreatedDto createDto,
+                       BindingResult bindingResult,
                        @RequestParam("id") Long id,
                        @RequestParam("files") List<MultipartFile> files,
                        @RequestParam("boardType") String boardType) {
+        // 폼 입력값 검증
+        new BoardUpdateValidator().validate(createDto, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "community/addBoardForm";
+        }
+
         try {
             BoardType type = BoardType.valueOf(boardType);
             List<UploadFile> uploadFiles = fileStore.storeFiles(files, type);
@@ -114,9 +123,14 @@ public class BoardController {
         }
     }
 
-    public String update(@PathVariable("id") Long id, @ModelAttribute BoardUpdatedDto updateDto,
-                         @RequestParam("files") List<MultipartFile> files,
+    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute BoardUpdatedDto updateDto,
+                         BindingResult bindingResult, @RequestParam("files") List<MultipartFile> files,
                          @RequestParam(value = "filesToDelete", required = false) List<String> filesToDelete) {
+        // 폼 입력값 검증
+        new BoardUpdateValidator().validate(updateDto, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "community/editBoardForm";
+        }
         try {
             List<UploadFile> uploadFiles = fileStore.storeFiles(files, BoardType.valueOf(updateDto.getBoardType()));
             boardService.updateBoard(id, updateDto, uploadFiles, filesToDelete);

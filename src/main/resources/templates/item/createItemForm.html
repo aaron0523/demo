@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
+    <title>Create Item Form</title>
+    <style>
+        .container {
+            max-width: 700px;
+        }
+    </style>
+    <script>
+        function showAdditionalFields() {
+            var type = document.getElementById("type").value;
+
+            var bookFields = document.getElementById("bookFields");
+            var foodFields = document.getElementById("foodFields");
+            var lifeFields = document.getElementById("lifeFields");
+
+            if (type === "BOOK") {
+                bookFields.style.display = "block";
+                foodFields.style.display = "none";
+                lifeFields.style.display = "none";
+            } else if (type === "FOOD") {
+                bookFields.style.display = "none";
+                foodFields.style.display = "block";
+                lifeFields.style.display = "none";
+            } else if (type === "LIFE") {
+                bookFields.style.display = "none";
+                foodFields.style.display = "none";
+                lifeFields.style.display = "block";
+            } else {
+                bookFields.style.display = "none";
+                foodFields.style.display = "none";
+                lifeFields.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{board.add}">상품 등록</h2>
+    </div>
+
+    <form action="/items/new" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required><br><br>
+
+        <label for="stockQuantity">Stock Quantity:</label>
+        <input type="number" id="stockQuantity" name="stockQuantity" required><br><br>
+
+        <label for="type">Type:</label>
+        <select id="type" name="type" required onchange="showAdditionalFields()">
+            <option value="">-----</option>
+            <option value="BOOK">Book</option>
+            <option value="FOOD">Food</option>
+            <option value="LIFE">Life</option>
+        </select>
+
+        <div id="bookFields" style="display: none;">
+            <label for="author">Author:</label>
+            <input type="text" id="author" name="author">
+            <br><br>
+            <label for="isbn">ISBN:</label>
+            <input type="text" id="isbn" name="isbn">
+        </div>
+
+        <div id="foodFields" style="display: none;">
+            <label for="category">Category:</label>
+            <select id="category" name="category">
+                <option value="CATEGORY1">Category 1</option>
+                <option value="CATEGORY2">Category 2</option>
+                <option value="CATEGORY3">Category 3</option>
+            </select>
+        </div>
+
+        <div id="lifeFields" style="display: none;">
+            <label for="style">Life:</label>
+            <select id="style" name="style">
+                <option value="STYLE1">Style 1</option>
+                <option value="STYLE2">Style 2</option>
+                <option value="STYLE3">Style 3</option>
+            </select>
+        </div>
+
+        <br>
+        <hr class="my-4">
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.create}">생성</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg" onclick="history.back()" type="button" th:text="#{button.cancel}">취소</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

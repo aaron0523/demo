@@ -35,7 +35,8 @@
         </div>
 
         <div th:if="${#fields.hasGlobalErrors()}">
-            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+               th:if="${err.equals('아이디 또는 비밀번호가 맞지 않습니다.')}" th:text="${err}">전체 오류 메시지</p>
         </div>
 
         <hr class="my-4">

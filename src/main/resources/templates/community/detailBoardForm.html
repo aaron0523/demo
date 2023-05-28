@@ -14,35 +14,35 @@
 <body>
 <div class="container">
     <div class="py-6 text-center" style="padding-top: 30px">
-        <h2>상세 페이지</h2>
+        <h2 th:text="#{board.detailPage}">상세 페이지</h2>
     </div>
     <br/>
     <table class="table">
         <tbody>
         <tr>
-            <th style="width: 15%">제목</th>
+            <th style="width: 15%" th:text="#{board.title}">제목</th>
             <td th:text="${board.title}"></td>
-            <th style="width: 15%">작성자</th>
+            <th style="width: 15%" th:text="#{board.author}">작성자</th>
             <td th:text="${board.author.getNickName()}"></td>
         </tr>
         <tr>
-            <th style="width: 15%">작성일</th>
+            <th style="width: 15%" th:text="#{board.dateCreated}">작성일</th>
             <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
-            <th style="width: 15%">수정일</th>
+            <th style="width: 15%" th:text="#{board.modificationDate}">수정일</th>
             <td th:text="${#temporals.format(board.updatedDate, 'yyyy-MM-dd HH:mm')}"></td>
         </tr>
         <tr>
-            <th style="width: 15%">내용</th>
+            <th style="width: 15%" th:text="#{board.content}">내용</th>
             <td colspan="3" th:text="${board.content}"></td>
         </tr>
         <tr>
-            <th style="width: 15%">유튜브 동영상</th>
+            <th style="width: 15%" th:text="#{board.youtubeURL}">유튜브 동영상</th>
             <td colspan="3">
-                <a th:href="${board.youtubeUrl}" target="_blank">유튜브에서 동영상 시청</a>
+                <a th:href="${board.youtubeUrl}" target="_blank" th:text="#{board.watchYoutube}">유튜브에서 동영상 시청</a>
             </td>
         </tr>
         <tr>
-            <th style="width: 15%">이미지</th>
+            <th style="width: 15%" th:text="#{board.image}">이미지</th>
             <td colspan="3">
                 <div th:each="file : ${board.uploadFiles}">
                     <img th:src="@{'/images/community/' + ${file.storeFileName}}"
@@ -59,17 +59,17 @@
             <button class="w-100 btn btn-primary btn-lg"
                     onclick="location.href='editBoardForm.html'"
                     th:onclick="|location.href='@{/community/edit/{boardId}(boardId=${board.id})}'|"
-                    type="button">수정</button>
+                    type="button" th:text="#{button.edit}">수정</button>
         </div>
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
                     onclick="location.href='index.html'"
                     th:onclick="|location.href='@{/community/board}'|"
-                    type="button">목록으로</button>
+                    type="button" th:text="#{button.list}">목록으로</button>
         </div>
         <div class="col">
             <form method="post" th:action="@{/community/delete/{boardId}(boardId=${board.id})}">
-                <button class="w-100 btn btn-danger btn-lg" type="submit">삭제</button>
+                <button class="w-100 btn btn-danger btn-lg" type="submit" th:text="#{button.delete}">삭제</button>
             </form>
         </div>
     </div>

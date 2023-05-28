@@ -1,13 +1,14 @@
 package com.demo.web.controller;
 
-import com.demo.domain.exception.DuplicateMemberException;
+import com.demo.exception.DuplicateMemberException;
+import com.demo.exception.MemberNotFoundException;
 import com.demo.domain.member.Member;
-import com.demo.domain.service.member.MemberService;
+import com.demo.service.member.MemberService;
 import com.demo.web.SessionConst;
 import com.demo.web.dto.member.MemberJoinDto;
 import com.demo.web.dto.member.MemberUpdateDto;
-import com.demo.web.validator.MemberJoinDtoValidator;
-import com.demo.web.validator.MemberUpdateDtoValidator;
+import com.demo.web.validator.member.MemberJoinDtoValidator;
+import com.demo.web.validator.member.MemberUpdateDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -15,9 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -63,7 +62,7 @@ public class MemberController {
         member.setCreatedDate(LocalDateTime.now());
 
         try {
-            memberService.join(member);
+            memberService.save(member);
         } catch (DuplicateMemberException e) {
             // 입력값이 유효하지 않을 경우 세션에 값 저장
             session.setAttribute("memberJoinDto", memberJoinDto);
@@ -95,7 +94,8 @@ public class MemberController {
     }
 
     @PostMapping("/edit")
-    public String update(@Validated @ModelAttribute MemberUpdateDto memberUpdateDto, BindingResult bindingResult, HttpSession session) {
+    public String update(@Validated @ModelAttribute MemberUpdateDto memberUpdateDto, BindingResult bindingResult,
+                         HttpSession session, Model model) {
         // 폼 입력값 검증
         new MemberUpdateDtoValidator().validate(memberUpdateDto, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -108,10 +108,14 @@ public class MemberController {
             return "redirect:/";
         }
 
-        // 회원 정보 업데이트
-        memberUpdateDto.setUpdatedDate(LocalDateTime.now());
-        memberService.update(loggedInMember.getId(), memberUpdateDto);
-
+        try {
+            // 회원 정보 업데이트
+            memberUpdateDto.setUpdatedDate(LocalDateTime.now());
+            memberService.update(loggedInMember.getId(), memberUpdateDto);
+        } catch (MemberNotFoundException e) {
+            session.setAttribute("memberUpdateDto", memberUpdateDto);
+            model.addAttribute("errorMessage", e.getMessage());
+        }
         // 현재 세션 업데이트
         loggedInMember.setName(memberUpdateDto.getName());
         loggedInMember.setNickName(memberUpdateDto.getNickName());
