@@ -1,5 +1,6 @@
 package com.demo.service.member;
 
+import com.demo.domain.address.Address;
 import com.demo.exception.DuplicateMemberException;
 import com.demo.exception.MemberNotFoundException;
 import com.demo.domain.member.Member;
@@ -14,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Slf4j
 public class MemberServiceImpl implements MemberService {
 
     private final JpaMemberRepository jpaMemberRepository;
@@ -68,6 +69,14 @@ public class MemberServiceImpl implements MemberService {
     public void update(Long memberId, MemberUpdateDto memberUpdateDto) throws MemberNotFoundException {
         Member findMember = jpaMemberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("해당 회원을 찾을 수 없습니다. 회원 ID: " + memberId));
+
+        findMember.setName(memberUpdateDto.getName());
+        findMember.setNickName(memberUpdateDto.getNickName());
+        findMember.setPassword(memberUpdateDto.getPassword());
+
+        Address address = new Address(memberUpdateDto.getCity(), memberUpdateDto.getStreet(), memberUpdateDto.getZipcode());
+        findMember.setAddress(address);
+        findMember.setUpdatedDate(memberUpdateDto.getUpdatedDate());
 
         jpaMemberRepository.update(findMember.getId(), memberUpdateDto);
     }

@@ -51,7 +51,7 @@ public class ItemController {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("id").descending());
         Page<Item> itemPage = itemService.getPaginatedItems(pageable);
 
-        List<Item> items = itemService.getAllItems();
+        List<Item> items = itemService.findAllItems();
 
         model.addAttribute("itemPage", itemPage);
         model.addAttribute("items", items);
@@ -63,7 +63,7 @@ public class ItemController {
      */
     @GetMapping("/{itemId}/edit")
     public String updateItemForm(@PathVariable("itemId") Long itemId, Model model) {
-        Item item = itemService.getItemById(itemId).get();
+        Item item = itemService.findById(itemId).get();
         ItemForm form = new ItemForm();
         form.updateItemForm(item.getId(), item.getName(), item.getPrice(), item.getStockQuantity(), item.getType().name());
         model.addAttribute("form", form);
@@ -75,7 +75,7 @@ public class ItemController {
      */
     @PostMapping("/{itemId}/edit")
     public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") ItemForm form) {
-        Optional<Item> optionalItem = itemService.getItemById(itemId);
+        Optional<Item> optionalItem = itemService.findById(itemId);
         if (optionalItem.isPresent()) {
             Item item = optionalItem.get();
             item.updateItem(form.getName(), form.getPrice(), form.getStockQuantity(), ItemType.valueOf(form.getType()));

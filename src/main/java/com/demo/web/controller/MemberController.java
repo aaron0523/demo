@@ -1,5 +1,6 @@
 package com.demo.web.controller;
 
+import com.demo.domain.address.Address;
 import com.demo.exception.DuplicateMemberException;
 import com.demo.exception.MemberNotFoundException;
 import com.demo.domain.member.Member;
@@ -29,6 +30,8 @@ import java.util.Optional;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberJoinDtoValidator memberJoinDtoValidator;
+    private final MemberUpdateDtoValidator memberUpdateDtoValidator;
 
     @GetMapping("/add")
     public String addForm(Model model, HttpSession session) {
@@ -45,7 +48,7 @@ public class MemberController {
     public String save(@Valid @ModelAttribute MemberJoinDto memberJoinDto, BindingResult bindingResult,
                        Model model, HttpSession session) {
         // 폼 입력값 검증
-        new MemberJoinDtoValidator().validate(memberJoinDto, bindingResult);
+        memberJoinDtoValidator.validate(memberJoinDto, bindingResult);
         if (bindingResult.hasErrors()) {
             // 입력값이 유효하지 않을 경우 세션에 값 저장
             session.setAttribute("memberJoinDto", memberJoinDto);
@@ -59,6 +62,10 @@ public class MemberController {
         member.setPassword(memberJoinDto.getPassword());
         member.setName(memberJoinDto.getName());
         member.setNickName(memberJoinDto.getNickName());
+
+        Address address = new Address(memberJoinDto.getCity(), memberJoinDto.getStreet(), memberJoinDto.getZipcode());
+        member.setAddress(address);
+
         member.setCreatedDate(LocalDateTime.now());
 
         try {
@@ -88,6 +95,10 @@ public class MemberController {
         memberUpdateDto.setName(loggedInMember.getName());
         memberUpdateDto.setNickName(loggedInMember.getNickName());
 
+        memberUpdateDto.setCity(loggedInMember.getAddress().getCity());
+        memberUpdateDto.setStreet(loggedInMember.getAddress().getStreet());
+        memberUpdateDto.setZipcode(loggedInMember.getAddress().getZipcode());
+
         model.addAttribute("memberUpdateDto", memberUpdateDto);
 
         return "member/editMemberForm";
@@ -97,7 +108,7 @@ public class MemberController {
     public String update(@Validated @ModelAttribute MemberUpdateDto memberUpdateDto, BindingResult bindingResult,
                          HttpSession session, Model model) {
         // 폼 입력값 검증
-        new MemberUpdateDtoValidator().validate(memberUpdateDto, bindingResult);
+        memberUpdateDtoValidator.validate(memberUpdateDto, bindingResult);
         if (bindingResult.hasErrors()) {
             return "member/editMemberForm";
         }
@@ -108,9 +119,13 @@ public class MemberController {
             return "redirect:/";
         }
 
+        // 회원 정보 업데이트
+        memberUpdateDto.setUpdatedDate(LocalDateTime.now());
+        // 주소 정보 업데이트
+        Address address = new Address(memberUpdateDto.getCity(), memberUpdateDto.getStreet(), memberUpdateDto.getZipcode());
+        loggedInMember.setAddress(address);
+
         try {
-            // 회원 정보 업데이트
-            memberUpdateDto.setUpdatedDate(LocalDateTime.now());
             memberService.update(loggedInMember.getId(), memberUpdateDto);
         } catch (MemberNotFoundException e) {
             session.setAttribute("memberUpdateDto", memberUpdateDto);

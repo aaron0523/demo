@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
+    <title>Order List</title>
+    <style>
+        .container {
+            max-width: 700px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="py-5 text-center">
+        <h2 th:text="#{orderList.title}">주문 내역</h2>
+        <p th:text="'사용자: ' + ${nickname}"></p>
+    </div>
+
+    <!-- 주문 내역 검색 -->
+    <form class="mb-3" th:action="@{/orders/list}" method="get">
+        <div class="row">
+            <div class="col">
+                <label for="status" class="form-label" th:text="#{orderList.status}">주문 상태</label>
+                <select id="status" name="status" class="form-select">
+                    <option value="" th:text="#{orderList.all}">전체</option>
+                    <option value="READY" th:text="#{orderList.ready}">준비 중</option>
+                    <option value="COMP" th:text="#{orderList.completed}">완료</option>
+                    <option value="CANCEL" th:text="#{orderList.canceled}">취소</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="type" class="form-label" th:text="#{orderList.type}">상품 유형</label>
+                <select id="type" name="type" class="form-select">
+                    <option value="" th:text="#{orderList.all}">전체</option>
+                    <option value="BOOK" th:text="#{orderList.book}">도서</option>
+                    <option value="LIFE" th:text="#{orderList.life}">생활용품</option>
+                    <option value="FOOD" th:text="#{orderList.food}">음식</option>
+                </select>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary" type="submit" th:text="#{orderList.search}">검색</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- 주문 내역 테이블 -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th th:text="#{orderList.member}">회원명</th>
+            <th th:text="#{orderList.item}">상품명</th>
+            <th th:text="#{orderList.price}">주문가격</th>
+            <th th:text="#{orderList.quantity}">주문수량</th>
+            <th th:text="#{orderList.orderStatus}">배송상태</th>
+            <th th:text="#{orderList.orderDate}">주문일시</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 여기에 주문 내역 데이터를 Thymeleaf를 사용하여 반복적으로 출력 -->
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.member.name}"></td>
+            <td th:text="${order.orderItems[0].item.name}"></td>
+            <td th:text="${order.orderItems[0].orderPrice}"></td>
+            <td th:text="${order.orderItems[0].count}"></td>
+            <td>
+                <span th:if="${order.delivery.status == 'READY'}" th:text="#{orderList.ready}">준비 중</span>
+                <span th:if="${order.delivery.status == 'COMP'}" th:text="#{orderList.completed}">완료</span>
+            </td>
+            <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <button class="btn btn-danger" th:if="${order.status == 'ORDER'}"
+                        th:text="#{button.cancel}"
+                        th:onclick="'javascript:cancel(\'' + ${order.id} + '\')'"></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-info"
+            th:onclick="|location.href='@{/}'|"
+            type="button">Home</button>
+</div>
+</body>
+<script>
+    function cancel(orderId) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/orders/" + Number(orderId) + "/cancel");
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</html>

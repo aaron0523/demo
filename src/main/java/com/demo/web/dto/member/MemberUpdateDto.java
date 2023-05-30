@@ -23,6 +23,10 @@ public class MemberUpdateDto {
 //    @Size(max = 10)
     private String nickName;
 
+    private String city;
+    private String street;
+    private String zipcode;
+
     private LocalDateTime updatedDate;
 
 }

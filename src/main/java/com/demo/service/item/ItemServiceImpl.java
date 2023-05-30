@@ -19,11 +19,11 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
 
-    public List<Item> getAllItems() {
+    public List<Item> findAllItems() {
         return itemRepository.findAll();
     }
 
-    public Optional<Item> getItemById(Long id) {
+    public Optional<Item> findById(Long id) {
         return itemRepository.findById(id);
     }
 

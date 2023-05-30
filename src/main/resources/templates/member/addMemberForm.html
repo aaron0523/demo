@@ -42,25 +42,46 @@
                    th:errorclass="${#fields.hasErrors('password')} ? 'field-error' : ''">
             <div class="field-error" th:errors="*{password}" />
         </div>
-        <div>
+        <div class="form-group">
             <label for="confirmPassword" th:text="#{label.confirmPassword}">비밀번호 확인</label>
             <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control"
                    th:errorclass="${#fields.hasErrors('confirmPassword')} ? 'field-error' : ''">
             <div class="field-error" th:errors="*{confirmPassword}" />
         </div>
-        <div>
+        <div class="form-group">
             <label for="name" th:text="#{label.name}">이름</label>
             <input type="text" id="name" th:field="*{name}" class="form-control"
                    th:errorclass="${#fields.hasErrors('name')} ? 'field-error' : ''">
             <div class="field-error" th:errors="*{name}" />
         </div>
-        <div>
+        <div class="form-group">
             <label for="nickName" th:text="#{label.nickName}">별명</label>
             <input type="text" id="nickName" th:field="*{nickName}" class="form-control"
                    th:errorclass="${#fields.hasErrors('nickName')} ? 'field-error' : ''">
             <div class="field-error" th:errors="*{nickName}" />
         </div>
 
+        <p class="lead" th:text="#{label.address}">주소</p>
+        <p>
+        <div class="form-group">
+            <label th:text="#{label.city}">도시</label>
+            <input type="text" th:field="*{city}" class="form-control"
+                   th:errorclass="${#fields.hasErrors('city')} ? 'field-error' : ''">
+            <div class="field-error" th:errors="*{city}" />
+        </div>
+        <div class="form-group">
+            <label th:text="#{label.street}">거리</label>
+            <input type="text" th:field="*{street}" class="form-control"
+                   th:errorclass="${#fields.hasErrors('street')} ? 'field-error' : ''">
+            <div class="field-error" th:errors="*{street}" />
+        </div>
+        <div class="form-group">
+            <label th:text="#{label.zipcode}">우편번호</label>
+            <input type="text" th:field="*{zipcode}" class="form-control"
+                   th:errorclass="${#fields.hasErrors('zipcode')} ? 'field-error' : ''">
+            <div class="field-error" th:errors="*{zipcode}" />
+        </div>
+        </p>
 
         <hr class="my-4">
 

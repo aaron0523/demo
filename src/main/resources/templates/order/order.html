@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/bootstrap.min.css}" href="../css/bootstrap.min.css" rel="stylesheet">
+    <title>Order Form</title>
+    <style>
+        .container {
+            max-width: 700px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="py-5 text-center">
+        <h2 th:text="#{order.place}">주문하기</h2>
+    </div>
+
+    <!-- 상품 목록 -->
+    <h3 th:text="#{order.itemList}">상품 목록</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th th:text="#{item.name}">상품명</th>
+            <th th:text="#{item.price}">가격</th>
+            <th th:text="#{item.stockQuantity}">재고</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 여기에 상품 목록 데이터를 Thymeleaf를 사용하여 반복적으로 출력 -->
+        <tr th:each="item : ${items}">
+            <td th:text="${item.name}"></td>
+            <td th:text="${item.price}"></td>
+            <td th:text="${item.stockQuantity}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <hr class="my-4">
+
+    <!-- 주문 양식 -->
+    <h3 th:text="#{order.form}">주문 양식</h3>
+    <form th:action method="post" th:object="${orderDto}">
+        <!-- 상품 선택 -->
+        <div class="mb-3">
+            <label for="itemId" class="form-label" th:text="#{order.item}">상품 선택</label>
+            <select id="itemId" name="itemId" class="form-select" required>
+                <option value="" th:text="#{order.selectItem}">-- 선택하세요 --</option>
+                <!-- 여기에 상품 목록 데이터를 Thymeleaf를 사용하여 반복적으로 출력 -->
+                <option th:each="item : ${items}" th:value="${item.id}" th:text="${item.name}"></option>
+            </select>
+        </div>
+
+        <!-- 수량 입력 -->
+        <div class="mb-3">
+            <label for="count" class="form-label" th:text="#{order.count}">수량</label>
+            <input type="number" id="count" name="count" class="form-control" required>
+        </div>
+
+        <!-- 주문 버튼 -->
+        <button class="btn btn-primary" type="submit" th:text="#{order.placeOrder}">주문하기</button>
+    </form>
+</div>
+</body>
+</html>
+
